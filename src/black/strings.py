@@ -167,7 +167,7 @@ def _cached_compile(pattern: str) -> Pattern[str]:
 
 
 def normalize_string_quotes(s: str) -> str:
-    """Prefer double quotes but only if it doesn't cause more escaping.
+    """Prefer single quotes but only if it doesn't cause more escaping.
 
     Adds or removes backslashes as appropriate.
     """
@@ -178,12 +178,12 @@ def normalize_string_quotes(s: str) -> str:
     elif value[:3] == "'''":
         orig_quote = "'''"
         new_quote = '"""'
-    elif value[0] == '"':
-        orig_quote = '"'
-        new_quote = "'"
-    else:
+    elif value[0] == "'":
         orig_quote = "'"
         new_quote = '"'
+    else:
+        orig_quote = '"'
+        new_quote = "'"
     first_quote_pos = s.find(orig_quote)
     if first_quote_pos == -1:
         return s  # There's an internal error
@@ -226,7 +226,7 @@ def normalize_string_quotes(s: str) -> str:
                 # Do not introduce backslashes in interpolated expressions
                 return s
 
-    if new_quote == '"""' and new_body[-1:] == '"':
+    if new_quote == "'''" and new_body[-1:] == "'":
         # edge case:
         new_body = new_body[:-1] + '\\"'
     orig_escape_count = body.count("\\")
@@ -234,8 +234,8 @@ def normalize_string_quotes(s: str) -> str:
     if new_escape_count > orig_escape_count:
         return s  # Do not introduce more escaping
 
-    if new_escape_count == orig_escape_count and orig_quote == '"':
-        return s  # Prefer double quotes
+    if new_escape_count == orig_escape_count and orig_quote == "'":
+        return s  # Prefer single quotes
 
     return f"{prefix}{new_quote}{new_body}{new_quote}"
 
@@ -245,7 +245,7 @@ def normalize_fstring_quotes(
     middles: List[Leaf],
     is_raw_fstring: bool,
 ) -> Tuple[List[Leaf], str]:
-    """Prefer double quotes but only if it doesn't cause more escaping.
+    """Prefer single quotes but only if it doesn't cause more escaping.
 
     Adds or removes backslashes as appropriate.
     """
@@ -257,7 +257,7 @@ def normalize_fstring_quotes(
     elif quote == '"':
         new_quote = "'"
     else:
-        new_quote = '"'
+        new_quote = "'"
 
     unescaped_new_quote = _cached_compile(rf"(([^\\]|^)(\\\\)*){new_quote}")
     escaped_new_quote = _cached_compile(rf"([^\\]|^)\\((?:\\\\)*){new_quote}")
@@ -296,8 +296,8 @@ def normalize_fstring_quotes(
     if new_escape_count > orig_escape_count:
         return middles, quote  # Do not introduce more escaping
 
-    if new_escape_count == orig_escape_count and quote == '"':
-        return middles, quote  # Prefer double quotes
+    if new_escape_count == orig_escape_count and quote == "'":
+        return middles, quote  # Prefer single quotes
 
     for middle, new_segment in zip(middles, new_segments):
         middle.value = new_segment
