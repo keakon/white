@@ -6,7 +6,7 @@ A fork of the Black formatter but prefers single quotes.
 pip install .
 ```
 
-# Development
+# Development Mode
 
 ```sh
 pip install -e .
@@ -14,7 +14,6 @@ pip install -e .
 
 # Usage
 
-To get started right away with sensible defaults:
 
 ```sh
 black {source_file_or_directory}
@@ -22,7 +21,7 @@ black {source_file_or_directory}
 
 # Integration with VSCode
 
-Install [https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter](Black Formatter) and edit the settings.json file:
+Install [Black Formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter) and edit the settings.json file:
 ```
 {
     "[python]": {
@@ -32,6 +31,6 @@ Install [https://marketplace.visualstudio.com/items?itemName=ms-python.black-for
             "source.organizeImports": "explicit"
         },
     },
-    "black-formatter.path": ["/bin/black"]  // change to the actual path
+    "black-formatter.path": ["/bin/black"]  // change it to the actual path
 }
 ```
