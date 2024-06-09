@@ -414,6 +414,7 @@ class LineGenerator(Visitor[Line]):
         if Preview.hex_codes_in_unicode_sequences in self.mode:
             normalize_unicode_escape_sequences(leaf)
 
+        docstring = ''
         if is_docstring(leaf, self.mode) and not re.search(r"\\\s*\n", leaf.value):
             # We're ignoring docstrings with backslash newline escapes because changing
             # indentation of those changes the AST representation of the code.
@@ -499,7 +500,9 @@ class LineGenerator(Visitor[Line]):
 
         if self.mode.string_normalization and leaf.type == token.STRING:
             leaf.value = normalize_string_prefix(leaf.value)
-            leaf.value = normalize_string_quotes(leaf.value)
+            leaf.value = normalize_string_quotes(
+                leaf.value, is_docs_tring=bool(docstring)
+            )
         yield from self.visit_default(leaf)
 
     def visit_NUMBER(self, leaf: Leaf) -> Iterator[Line]:

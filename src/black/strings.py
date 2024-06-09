@@ -166,24 +166,38 @@ def _cached_compile(pattern: str) -> Pattern[str]:
     return re.compile(pattern)
 
 
-def normalize_string_quotes(s: str) -> str:
+def normalize_string_quotes(s: str, is_docs_tring: bool = False) -> str:
     """Prefer single quotes but only if it doesn't cause more escaping.
 
     Adds or removes backslashes as appropriate.
     """
     value = s.lstrip(STRING_PREFIX_CHARS)
-    if value[:3] == '"""':
-        return s
+    quotes = value[:3]
+    is_single_line = True
 
-    elif value[:3] == "'''":
-        orig_quote = "'''"
-        new_quote = '"""'
-    elif value[0] == "'":
-        orig_quote = "'"
-        new_quote = '"'
+    logging.error(is_docs_tring)
+    if is_docs_tring:
+        if value[:3] == '"""':
+            return s
+        elif value[:3] == "'''":
+            orig_quote = "'''"
+            new_quote = '"""'
+            is_single_line = False
     else:
-        orig_quote = '"'
-        new_quote = "'"
+        if quotes == "'''":
+            return s
+        elif quotes == '"""':
+            orig_quote = '"""'
+            new_quote = "'''"
+            is_single_line = False
+
+    if is_single_line:
+        if value[0] == "'":
+            orig_quote = "'"
+            new_quote = '"'
+        else:
+            orig_quote = '"'
+            new_quote = "'"
     first_quote_pos = s.find(orig_quote)
     if first_quote_pos == -1:
         return s  # There's an internal error
