@@ -175,7 +175,6 @@ def normalize_string_quotes(s: str, is_docs_tring: bool = False) -> str:
     quotes = value[:3]
     is_single_line = True
 
-    logging.error(is_docs_tring)
     if is_docs_tring:
         if value[:3] == '"""':
             return s
